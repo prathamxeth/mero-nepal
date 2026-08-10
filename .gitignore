@@ -1,0 +1,12 @@
+# Ignore everything by default
+*
+
+# Allow directory traversal if needed
+!*/
+
+# Explicitly keep only these files
+!index.html
+!styles.css
+!app.js
+!CNAME
+!.gitignore
