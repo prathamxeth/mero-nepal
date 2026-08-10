@@ -1,4 +1,4 @@
-// Deluxe Saloon — YouTube iFrame Player API Engine for Full Uninterrupted Audio (Exact Method used by saloon.wtf)
+// Deluxe Saloon — 100% Real Live Listener Counter & Full Audio Engine
 
 const PLAYLIST = [
   {
@@ -92,7 +92,7 @@ const btnNext = document.getElementById('btn-next');
 const artContainer = document.getElementById('art-container');
 const vinylCoverEl = document.getElementById('vinyl-cover');
 
-// YouTube iFrame API initialization hook (Exact method used by saloon.wtf)
+// YouTube iFrame API initialization hook
 window.onYouTubeIframeAPIReady = function() {
   ytPlayer = new YT.Player('youtube-player', {
     height: '360',
@@ -119,7 +119,7 @@ window.onYouTubeIframeAPIReady = function() {
 function init() {
   updateClock();
   setInterval(updateClock, 1000);
-  initLiveListenerCounter();
+  initRealtimeListenerCounter();
 
   btnPlay.addEventListener('click', togglePlay);
   artContainer.addEventListener('click', togglePlay);
@@ -146,7 +146,6 @@ function onPlayerReady(event) {
 }
 
 function onPlayerStateChange(event) {
-  // YT.PlayerState.ENDED = 0
   if (event.data === 0) {
     playNextTrack();
   }
@@ -164,13 +163,15 @@ function updateClock() {
   if (clockAmpmEl) clockAmpmEl.textContent = ampm;
 }
 
-// Real-Time Live Presence & Listener Counter Engine
-function initLiveListenerCounter() {
+// 100% PURE REAL-TIME ACTIVE LISTENER COUNTER (Zero Fake Math)
+function initRealtimeListenerCounter() {
   const SESSION_ID = 'session_' + Math.random().toString(36).substring(2, 9);
-  const STORAGE_KEY = 'saloon_active_listeners';
-  const bc = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('saloon_presence') : null;
+  const STORAGE_KEY = 'saloon_real_active_sessions';
+  const bc = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('saloon_realtime_presence') : null;
 
-  function updateActiveSessions() {
+  let globalOnlineCount = 1;
+
+  function recalculateActiveSessions() {
     const now = Date.now();
     let sessions = {};
     try {
@@ -179,8 +180,9 @@ function initLiveListenerCounter() {
       sessions = {};
     }
 
+    // Prune stale sessions (inactive for over 4 seconds)
     Object.keys(sessions).forEach(id => {
-      if (now - sessions[id] > 6000) {
+      if (now - sessions[id] > 4000) {
         delete sessions[id];
       }
     });
@@ -190,24 +192,42 @@ function initLiveListenerCounter() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
     } catch(e) {}
 
-    const activeLocalTabs = Object.keys(sessions).length;
-    const currentHour = new Date().getHours();
-    const timeFactor = Math.sin(((currentHour + 2) / 24) * Math.PI * 2);
-    const audienceBase = Math.floor(28 + (timeFactor * 12));
-    const totalLiveListeners = Math.max(1, audienceBase + activeLocalTabs - 1);
+    const realActiveCount = Math.max(1, Object.keys(sessions).length);
+    const finalDisplayCount = Math.max(realActiveCount, globalOnlineCount);
 
     if (onlineCountEl) {
-      onlineCountEl.textContent = totalLiveListeners;
+      onlineCountEl.textContent = finalDisplayCount;
     }
   }
 
-  updateActiveSessions();
-  setInterval(updateActiveSessions, 2500);
+  recalculateActiveSessions();
+  setInterval(recalculateActiveSessions, 1500);
 
   if (bc) {
-    bc.onmessage = () => updateActiveSessions();
+    bc.onmessage = (msg) => {
+      if (msg.data && msg.data.type === 'ping') {
+        recalculateActiveSessions();
+      }
+    };
     bc.postMessage({ type: 'ping', id: SESSION_ID });
   }
+
+  // Connect to free public WebSocket presence server for cross-device global real-time presence
+  try {
+    const ws = new WebSocket('wss://free.piesocket.com/v3/saloon_timro_realtime_count?api_key=VC5SGoWkn3M25B26yyJPnNJGl61GjUAOzzBxAzle&notify_self=1');
+
+    ws.onmessage = function(event) {
+      try {
+        const payload = JSON.parse(event.data);
+        if (payload && typeof payload.member_count === 'number') {
+          globalOnlineCount = payload.member_count;
+          recalculateActiveSessions();
+        }
+      } catch(err) {}
+    };
+
+    ws.onerror = function() {};
+  } catch(e) {}
 
   window.addEventListener('beforeunload', () => {
     try {
@@ -216,7 +236,7 @@ function initLiveListenerCounter() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
     } catch(e) {}
     if (bc) {
-      bc.postMessage({ type: 'pong', id: SESSION_ID });
+      bc.postMessage({ type: 'leave', id: SESSION_ID });
       bc.close();
     }
   });
