@@ -1,87 +1,74 @@
-// Mero Nepal Deluxe Saloon — Spotify Audio Engine for Playlist 0XwQxGWur4iagqxaqDRx0G
+// Deluxe Saloon — Single Official Spotify Embed Controller Engine (0XwQxGWur4iagqxaqDRx0G)
 
 const PLAYLIST = [
   {
-    id: '7d0zp6xa4jWP5Z8lDHvkVO',
+    uri: 'spotify:track:7d0zp6xa4jWP5Z8lDHvkVO',
     title: 'Feri Jaalma (From "Feri Resham Filili")',
     artist: 'Kali Prasad Baskota',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e0299a6ab5edff13abc12fccc06',
-    duration: 215,
-    audio: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3'
+    duration: 215
   },
   {
-    id: '2mhvp7y7VPEO35svHIg5D8',
+    uri: 'spotify:track:2mhvp7y7VPEO35svHIg5D8',
     title: 'Rukum Maikot',
     artist: 'SD Yogi',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e024ff30ca1dd7673a5f5727185',
-    duration: 198,
-    audio: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=chill-abstract-intention-12099.mp3'
+    duration: 198
   },
   {
-    id: '5nQA7m7xypeL7dFaGRwJO5',
+    uri: 'spotify:track:5nQA7m7xypeL7dFaGRwJO5',
     title: 'Timro Pratiksa',
     artist: 'Tribal Rain',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e0236fab4f7e48d1512f83dac8b',
-    duration: 240,
-    audio: 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_c7694901f4.mp3?filename=ambient-piano-amp-strings-10711.mp3'
+    duration: 240
   },
   {
-    id: '27U1vhPpc24s37476sgyb7',
+    uri: 'spotify:track:27U1vhPpc24s37476sgyb7',
     title: 'Swami Ji Please',
     artist: 'Yabesh Thapa',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02d725fa7f5ff01f24852ac269',
-    duration: 185,
-    audio: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=the-cradle-of-your-soul-15700.mp3'
+    duration: 185
   },
   {
-    id: '4UOieQcEQaHTDp2BBWxXq3',
+    uri: 'spotify:track:4UOieQcEQaHTDp2BBWxXq3',
     title: 'Jhim Jhim',
     artist: 'Swoopna Suman',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02c33795972f802118d18ab0a5',
-    duration: 210,
-    audio: 'https://cdn.pixabay.com/download/audio/2022/02/07/audio_29107ef4f2.mp3?filename=acoustic-guitar-loop-f-91bpm-131641.mp3'
+    duration: 210
   },
   {
-    id: '7350xCb5AH5X4CLzKXelAS',
+    uri: 'spotify:track:7350xCb5AH5X4CLzKXelAS',
     title: 'Yo Mutu Mero',
     artist: 'Neetesh Jung Kunwar',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02fcae9dd7ded53de18a311cf5',
-    duration: 232,
-    audio: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3?filename=sweet-love-12099.mp3'
+    duration: 232
   },
   {
-    id: '5p4IoJziGeIvCBZuLXYYez',
+    uri: 'spotify:track:5p4IoJziGeIvCBZuLXYYez',
     title: 'Kutu Ma Kutu (From "Dui Rupaiyan")',
     artist: 'Rajan Raj Shiwakoti',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02580764d4a7656ba3fd33c0dd',
-    duration: 260,
-    audio: 'https://cdn.pixabay.com/download/audio/2021/09/06/audio_03d987a02c.mp3?filename=folk-acoustic-guitar-11440.mp3'
+    duration: 260
   },
   {
-    id: '2Glr3HhyB8KLChU10qWAFk',
+    uri: 'spotify:track:2Glr3HhyB8KLChU10qWAFk',
     title: 'Kafle',
     artist: 'Sushant KC',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02a13ade520a8dae1178dbea8a',
-    duration: 195,
-    audio: 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_db6591201e.mp3?filename=guitar-electro-acoustic-110241.mp3'
+    duration: 195
   },
   {
-    id: '4IKW9jTESs959oE0coi7oA',
+    uri: 'spotify:track:4IKW9jTESs959oE0coi7oA',
     title: 'Naam K Ho',
     artist: 'Element Band',
     art: 'https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02d3739cea6f05b97012f9684f',
-    duration: 220,
-    audio: 'https://cdn.pixabay.com/download/audio/2022/08/02/audio_884fe92c21.mp3?filename=flute-acoustic-guitar-116744.mp3'
+    duration: 220
   }
 ];
 
 let currentTrackIndex = 0;
 let isPlaying = false;
 let embedController = null;
-
-// Audio Stream Engine
-const audioElement = new Audio();
-audioElement.preload = 'auto';
 
 // DOM Elements
 const clockHoursEl = document.getElementById('clock-hours');
@@ -103,9 +90,8 @@ const btnPrev = document.getElementById('btn-prev');
 const btnNext = document.getElementById('btn-next');
 const artContainer = document.getElementById('art-container');
 const vinylCoverEl = document.getElementById('vinyl-cover');
-const spotifyIframe = document.getElementById('spotify-iframe');
 
-// Spotify iFrame API Ready Callback
+// Official Spotify iFrame API Controller Setup (Single Source of Truth)
 window.onSpotifyIframeApiReady = (IFrameAPI) => {
   const element = document.getElementById('spotify-iframe');
   if (!element) return;
@@ -119,20 +105,29 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
   const callback = (EmbedController) => {
     embedController = EmbedController;
 
+    // Single source of truth for playback state & timeline sync
     EmbedController.addListener('playback_update', (e) => {
       if (e.data) {
         const positionSec = Math.floor(e.data.position / 1000);
         const durationSec = Math.floor(e.data.duration / 1000);
         const isPaused = e.data.isPaused;
 
-        if (durationSec > 0 && isPlaying) {
+        if (durationSec > 0) {
           const percentage = (positionSec / durationSec) * 100;
           progressBarEl.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
           timeDisplayEl.textContent = `${formatTime(positionSec)} / ${formatTime(durationSec)}`;
         }
 
-        if (isPaused && !audioElement.paused) {
-          // Keep state synced
+        if (isPaused) {
+          iconPlay.classList.remove('hidden');
+          iconPause.classList.add('hidden');
+          if (vinylCoverEl) vinylCoverEl.style.animationPlayState = 'paused';
+          isPlaying = false;
+        } else {
+          iconPlay.classList.add('hidden');
+          iconPause.classList.remove('hidden');
+          if (vinylCoverEl) vinylCoverEl.style.animationPlayState = 'running';
+          isPlaying = true;
         }
       }
     });
@@ -155,18 +150,6 @@ function init() {
   btnNext.addEventListener('click', playNextTrack);
   btnPrev.addEventListener('click', playPrevTrack);
   progressContainerEl.addEventListener('click', handleSeek);
-
-  audioElement.addEventListener('timeupdate', () => {
-    if (audioElement.duration && isPlaying) {
-      const percentage = (audioElement.currentTime / audioElement.duration) * 100;
-      progressBarEl.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
-      timeDisplayEl.textContent = `${formatTime(audioElement.currentTime)} / ${formatTime(audioElement.duration)}`;
-    }
-  });
-
-  audioElement.addEventListener('ended', () => {
-    playNextTrack();
-  });
 
   document.addEventListener('keydown', (e) => {
     if (e.code === 'Space') {
@@ -260,11 +243,9 @@ function loadTrack(index, autoPlay = true) {
   trackArtistEl.textContent = track.artist;
   trackArtEl.src = track.art;
 
-  audioElement.src = track.audio;
-
   if (embedController && embedController.loadUri) {
     try {
-      embedController.loadUri(`spotify:track:${track.id}`);
+      embedController.loadUri(track.uri);
     } catch(e) {}
   }
 
@@ -294,10 +275,6 @@ function playAudio() {
       embedController.play();
     } catch(e) {}
   }
-
-  audioElement.play().catch(err => {
-    console.log("Audio playback gesture:", err);
-  });
 }
 
 function pauseAudio() {
@@ -311,8 +288,6 @@ function pauseAudio() {
       embedController.pause();
     } catch(e) {}
   }
-
-  audioElement.pause();
 }
 
 function playNextTrack() {
@@ -330,8 +305,12 @@ function handleSeek(e) {
   const clickX = e.clientX - rect.left;
   const percentage = clickX / rect.width;
 
-  if (audioElement.duration) {
-    audioElement.currentTime = percentage * audioElement.duration;
+  if (embedController && embedController.seek) {
+    const duration = PLAYLIST[currentTrackIndex].duration || 200;
+    const targetSec = Math.floor(percentage * duration);
+    try {
+      embedController.seek(targetSec);
+    } catch(e) {}
   }
 }
 
