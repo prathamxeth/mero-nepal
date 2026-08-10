@@ -1,64 +1,64 @@
-// Deluxe Saloon — Single Official Spotify iFrame API Engine (No Audio Overlap)
+// Deluxe Saloon — YouTube iFrame Player API Engine for Full Uninterrupted Audio (Exact Method used by saloon.wtf)
 
 const PLAYLIST = [
   {
-    uri: 'spotify:track:7d0zp6xa4jWP5Z8lDHvkVO',
+    youtubeId: 'V-Fm9j6b8_8',
     title: 'Feri Jaalma (From "Feri Resham Filili")',
     artist: 'Kali Prasad Baskota',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e0299a6ab5edff13abc12fccc06',
     duration: 215
   },
   {
-    uri: 'spotify:track:2mhvp7y7VPEO35svHIg5D8',
+    youtubeId: 'l1V2a4R_P2U',
     title: 'Rukum Maikot',
     artist: 'SD Yogi',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e024ff30ca1dd7673a5f5727185',
     duration: 198
   },
   {
-    uri: 'spotify:track:5nQA7m7xypeL7dFaGRwJO5',
+    youtubeId: 'hK93G28-s1E',
     title: 'Timro Pratiksa',
     artist: 'Tribal Rain',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e0236fab4f7e48d1512f83dac8b',
     duration: 240
   },
   {
-    uri: 'spotify:track:27U1vhPpc24s37476sgyb7',
+    youtubeId: 'L379t5V2k0w',
     title: 'Swami Ji Please',
     artist: 'Yabesh Thapa',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02d725fa7f5ff01f24852ac269',
     duration: 185
   },
   {
-    uri: 'spotify:track:4UOieQcEQaHTDp2BBWxXq3',
+    youtubeId: 'S7p1p_z4J8w',
     title: 'Jhim Jhim',
     artist: 'Swoopna Suman',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02c33795972f802118d18ab0a5',
     duration: 210
   },
   {
-    uri: 'spotify:track:7350xCb5AH5X4CLzKXelAS',
+    youtubeId: '4_yG3_485r8',
     title: 'Yo Mutu Mero',
     artist: 'Neetesh Jung Kunwar',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02fcae9dd7ded53de18a311cf5',
     duration: 232
   },
   {
-    uri: 'spotify:track:5p4IoJziGeIvCBZuLXYYez',
+    youtubeId: 'V5w18r7R38s',
     title: 'Kutu Ma Kutu (From "Dui Rupaiyan")',
     artist: 'Rajan Raj Shiwakoti',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02580764d4a7656ba3fd33c0dd',
     duration: 260
   },
   {
-    uri: 'spotify:track:2Glr3HhyB8KLChU10qWAFk',
+    youtubeId: 'd6y1E_81r8g',
     title: 'Kafle',
     artist: 'Sushant KC',
     art: 'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02a13ade520a8dae1178dbea8a',
     duration: 195
   },
   {
-    uri: 'spotify:track:4IKW9jTESs959oE0coi7oA',
+    youtubeId: '9a8w-e22y34',
     title: 'Naam K Ho',
     artist: 'Element Band',
     art: 'https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02d3739cea6f05b97012f9684f',
@@ -68,7 +68,8 @@ const PLAYLIST = [
 
 let currentTrackIndex = 0;
 let isPlaying = false;
-let embedController = null;
+let ytPlayer = null;
+let updateInterval = null;
 
 // DOM Elements
 const clockHoursEl = document.getElementById('clock-hours');
@@ -91,55 +92,34 @@ const btnNext = document.getElementById('btn-next');
 const artContainer = document.getElementById('art-container');
 const vinylCoverEl = document.getElementById('vinyl-cover');
 
-// Official Spotify iFrame API Ready Callback
-window.onSpotifyIframeApiReady = (IFrameAPI) => {
-  const element = document.getElementById('embed-iframe');
-  const options = {
-    uri: 'spotify:playlist:0XwQxGWur4iagqxaqDRx0G',
-    width: '100%',
-    height: '152'
-  };
-
-  const callback = (EmbedController) => {
-    embedController = EmbedController;
-
-    // Single source of truth for playback events
-    EmbedController.addListener('playback_update', (e) => {
-      if (e.data) {
-        const positionSec = Math.floor(e.data.position / 1000);
-        const durationSec = Math.floor(e.data.duration / 1000);
-        const isPaused = e.data.isPaused;
-
-        if (durationSec > 0) {
-          const percentage = (positionSec / durationSec) * 100;
-          progressBarEl.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
-          timeDisplayEl.textContent = `${formatTime(positionSec)} / ${formatTime(durationSec)}`;
-        }
-
-        if (isPaused) {
-          iconPlay.classList.remove('hidden');
-          iconPause.classList.add('hidden');
-          if (vinylCoverEl) vinylCoverEl.style.animationPlayState = 'paused';
-          isPlaying = false;
-        } else {
-          iconPlay.classList.add('hidden');
-          iconPause.classList.remove('hidden');
-          if (vinylCoverEl) vinylCoverEl.style.animationPlayState = 'running';
-          isPlaying = true;
-        }
-      }
-    });
-  };
-
-  IFrameAPI.createController(element, options, callback);
+// YouTube iFrame API initialization hook (Exact method used by saloon.wtf)
+window.onYouTubeIframeAPIReady = function() {
+  ytPlayer = new YT.Player('youtube-player', {
+    height: '360',
+    width: '640',
+    videoId: PLAYLIST[0].youtubeId,
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      disablekb: 1,
+      fs: 0,
+      modestbranding: 1,
+      rel: 0,
+      playsinline: 1,
+      enablejsapi: 1,
+      origin: window.location.origin
+    },
+    events: {
+      'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange
+    }
+  });
 };
 
 function init() {
   updateClock();
   setInterval(updateClock, 1000);
   initLiveListenerCounter();
-
-  loadTrack(0, false);
 
   btnPlay.addEventListener('click', togglePlay);
   artContainer.addEventListener('click', togglePlay);
@@ -161,6 +141,17 @@ function init() {
   });
 }
 
+function onPlayerReady(event) {
+  loadTrack(0, false);
+}
+
+function onPlayerStateChange(event) {
+  // YT.PlayerState.ENDED = 0
+  if (event.data === 0) {
+    playNextTrack();
+  }
+}
+
 function updateClock() {
   const now = new Date();
   let hours = now.getHours();
@@ -173,7 +164,7 @@ function updateClock() {
   if (clockAmpmEl) clockAmpmEl.textContent = ampm;
 }
 
-// Real-Time Live Presence Engine
+// Real-Time Live Presence & Listener Counter Engine
 function initLiveListenerCounter() {
   const SESSION_ID = 'session_' + Math.random().toString(36).substring(2, 9);
   const STORAGE_KEY = 'saloon_active_listeners';
@@ -239,14 +230,14 @@ function loadTrack(index, autoPlay = true) {
   trackArtistEl.textContent = track.artist;
   trackArtEl.src = track.art;
 
-  if (embedController) {
-    embedController.loadUri(track.uri);
-  }
-
-  if (autoPlay) {
-    playAudio();
-  } else {
-    pauseAudio();
+  if (ytPlayer && ytPlayer.loadVideoById) {
+    if (autoPlay) {
+      ytPlayer.loadVideoById(track.youtubeId);
+      playAudio();
+    } else {
+      ytPlayer.cueVideoById(track.youtubeId);
+      pauseAudio();
+    }
   }
 }
 
@@ -264,9 +255,11 @@ function playAudio() {
   iconPause.classList.remove('hidden');
   if (vinylCoverEl) vinylCoverEl.style.animationPlayState = 'running';
 
-  if (embedController) {
-    embedController.play();
+  if (ytPlayer && ytPlayer.playVideo) {
+    ytPlayer.playVideo();
   }
+
+  startProgressLoop();
 }
 
 function pauseAudio() {
@@ -275,9 +268,11 @@ function pauseAudio() {
   iconPause.classList.add('hidden');
   if (vinylCoverEl) vinylCoverEl.style.animationPlayState = 'paused';
 
-  if (embedController) {
-    embedController.pause();
+  if (ytPlayer && ytPlayer.pauseVideo) {
+    ytPlayer.pauseVideo();
   }
+
+  stopProgressLoop();
 }
 
 function playNextTrack() {
@@ -290,15 +285,40 @@ function playPrevTrack() {
   loadTrack(prevIndex, true);
 }
 
+function startProgressLoop() {
+  stopProgressLoop();
+  updateProgress();
+  updateInterval = setInterval(updateProgress, 250);
+}
+
+function stopProgressLoop() {
+  if (updateInterval) clearInterval(updateInterval);
+}
+
+function updateProgress() {
+  if (!ytPlayer || !ytPlayer.getCurrentTime) return;
+
+  const currentTime = ytPlayer.getCurrentTime() || 0;
+  const duration = ytPlayer.getDuration() || PLAYLIST[currentTrackIndex].duration;
+
+  if (duration > 0) {
+    const percentage = (currentTime / duration) * 100;
+    progressBarEl.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
+    timeDisplayEl.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+  }
+}
+
 function handleSeek(e) {
+  if (!ytPlayer || !ytPlayer.getDuration) return;
+
   const rect = progressContainerEl.getBoundingClientRect();
   const clickX = e.clientX - rect.left;
   const percentage = clickX / rect.width;
+  const duration = ytPlayer.getDuration() || PLAYLIST[currentTrackIndex].duration;
+  const seekTime = percentage * duration;
 
-  if (embedController) {
-    const targetSec = Math.floor(percentage * (PLAYLIST[currentTrackIndex].duration || 200));
-    embedController.seek(targetSec);
-  }
+  ytPlayer.seekTo(seekTime, true);
+  updateProgress();
 }
 
 function formatTime(seconds) {
