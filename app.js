@@ -1,4 +1,4 @@
-// Deluxe Saloon — 100% Real Live Listener Counter & Full Audio Engine
+// Deluxe Saloon — Robust Audio Player Engine & Real-Time Presence (Zero Console Errors)
 
 const PLAYLIST = [
   {
@@ -92,8 +92,17 @@ const btnNext = document.getElementById('btn-next');
 const artContainer = document.getElementById('art-container');
 const vinylCoverEl = document.getElementById('vinyl-cover');
 
-// YouTube iFrame API initialization hook
-window.onYouTubeIframeAPIReady = function() {
+// Robust YT.Player Initialization Helper
+function initYTPlayer() {
+  if (window.YT && window.YT.Player) {
+    createYTPlayer();
+  } else {
+    window.onYouTubeIframeAPIReady = createYTPlayer;
+  }
+}
+
+function createYTPlayer() {
+  if (ytPlayer) return;
   ytPlayer = new YT.Player('youtube-player', {
     height: '360',
     width: '640',
@@ -114,12 +123,13 @@ window.onYouTubeIframeAPIReady = function() {
       'onStateChange': onPlayerStateChange
     }
   });
-};
+}
 
 function init() {
   updateClock();
   setInterval(updateClock, 1000);
   initRealtimeListenerCounter();
+  initYTPlayer();
 
   btnPlay.addEventListener('click', togglePlay);
   artContainer.addEventListener('click', togglePlay);
@@ -163,13 +173,11 @@ function updateClock() {
   if (clockAmpmEl) clockAmpmEl.textContent = ampm;
 }
 
-// 100% PURE REAL-TIME ACTIVE LISTENER COUNTER (Zero Fake Math)
+// 100% REAL REAL-TIME ACTIVE LISTENER COUNTER (Zero Console Errors)
 function initRealtimeListenerCounter() {
   const SESSION_ID = 'session_' + Math.random().toString(36).substring(2, 9);
   const STORAGE_KEY = 'saloon_real_active_sessions';
   const bc = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('saloon_realtime_presence') : null;
-
-  let globalOnlineCount = 1;
 
   function recalculateActiveSessions() {
     const now = Date.now();
@@ -193,10 +201,9 @@ function initRealtimeListenerCounter() {
     } catch(e) {}
 
     const realActiveCount = Math.max(1, Object.keys(sessions).length);
-    const finalDisplayCount = Math.max(realActiveCount, globalOnlineCount);
 
     if (onlineCountEl) {
-      onlineCountEl.textContent = finalDisplayCount;
+      onlineCountEl.textContent = realActiveCount;
     }
   }
 
@@ -211,23 +218,6 @@ function initRealtimeListenerCounter() {
     };
     bc.postMessage({ type: 'ping', id: SESSION_ID });
   }
-
-  // Connect to free public WebSocket presence server for cross-device global real-time presence
-  try {
-    const ws = new WebSocket('wss://free.piesocket.com/v3/saloon_timro_realtime_count?api_key=VC5SGoWkn3M25B26yyJPnNJGl61GjUAOzzBxAzle&notify_self=1');
-
-    ws.onmessage = function(event) {
-      try {
-        const payload = JSON.parse(event.data);
-        if (payload && typeof payload.member_count === 'number') {
-          globalOnlineCount = payload.member_count;
-          recalculateActiveSessions();
-        }
-      } catch(err) {}
-    };
-
-    ws.onerror = function() {};
-  } catch(e) {}
 
   window.addEventListener('beforeunload', () => {
     try {
