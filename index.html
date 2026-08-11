@@ -134,14 +134,14 @@
       </div>
     </div>
 
-    <!-- Official Spotify Embed Frame -->
+    <!-- Hidden YouTube Audio Engine (Guarantees Full Songs with No 30s Preview Limits) -->
     <div class="pointer-events-none absolute h-px w-px overflow-hidden opacity-0" aria-hidden="true">
-      <iframe id="spotify-iframe" data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/0XwQxGWur4iagqxaqDRx0G?utm_source=generator&theme=0&si=9d7c77d8866b4fdc" width="100%" height="152" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      <div id="youtube-player"></div>
     </div>
 
   </main>
 
-  <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
   <script src="app.js"></script>
 </body>
 </html>
