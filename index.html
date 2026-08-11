@@ -72,10 +72,12 @@
       </h1>
     </div>
 
-    <!-- Bottom Audio Player Bar (Exact saloon.wtf Pill & Control Buttons) -->
-    <div class="mb-[8vh] flex w-full justify-center px-6">
+    <!-- Bottom Audio Player Container (Explicit Mobile & Desktop Engine) -->
+    <div class="mb-[6vh] sm:mb-[8vh] flex w-full justify-center px-4 sm:px-6">
       <div class="w-full max-w-xl">
-        <div class="group relative flex items-center gap-4 rounded-full p-3 pr-5 bg-white/10 backdrop-blur-2xl backdrop-saturate-150 border border-white/20 shadow-[0_8px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.25)]">
+        
+        <!-- Desktop Glassmorphism Player Pill -->
+        <div id="desktop-player-pill" class="group relative flex items-center gap-4 rounded-full p-3 pr-5 bg-white/10 backdrop-blur-2xl backdrop-saturate-150 border border-white/20 shadow-[0_8px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.25)]">
           
           <!-- Track Artwork Cover (Exact saloon.wtf spinning vinyl & center hole overlay) -->
           <div class="relative h-20 w-20 shrink-0 cursor-pointer" id="art-container">
@@ -131,11 +133,17 @@
           </div>
 
         </div>
+
+        <!-- Explicit Mobile Native Spotify Player Frame -->
+        <div id="mobile-player-card" class="hidden overflow-hidden rounded-2xl border border-white/20 bg-black/40 backdrop-blur-xl shadow-2xl">
+          <iframe id="mobile-spotify-iframe" style="border-radius:16px" src="https://open.spotify.com/embed/playlist/0XwQxGWur4iagqxaqDRx0G?utm_source=generator&theme=0" width="100%" height="152" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+
       </div>
     </div>
 
-    <!-- Official Spotify Embed Frame for Mobile & Desktop -->
-    <div class="pointer-events-none absolute h-px w-px overflow-hidden opacity-0" aria-hidden="true">
+    <!-- Hidden Desktop Spotify Embed Frame -->
+    <div id="desktop-iframe-wrapper" class="pointer-events-none absolute h-px w-px overflow-hidden opacity-0" aria-hidden="true">
       <iframe id="spotify-iframe" data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/0XwQxGWur4iagqxaqDRx0G?utm_source=generator&theme=0&si=9d7c77d8866b4fdc" width="100%" height="152" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
 

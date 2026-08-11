@@ -1,4 +1,4 @@
-// Mero Nepal Deluxe Saloon — Spotify Mobile & Desktop Audio Engine (0XwQxGWur4iagqxaqDRx0G)
+// Mero Nepal Deluxe Saloon — Explicit Mobile & Desktop Spotify Audio Engine
 
 const PLAYLIST = [
   {
@@ -91,7 +91,25 @@ const btnNext = document.getElementById('btn-next');
 const artContainer = document.getElementById('art-container');
 const vinylCoverEl = document.getElementById('vinyl-cover');
 
-// Official Spotify iFrame API Controller Initialization Hook
+// EXPLICIT MOBILE VS DESKTOP DEVICE DETECTION
+const isMobileDevice = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+};
+
+function setupDevicePlayer() {
+  const desktopPill = document.getElementById('desktop-player-pill');
+  const mobileCard = document.getElementById('mobile-player-card');
+
+  if (isMobileDevice()) {
+    if (desktopPill) desktopPill.classList.add('hidden');
+    if (mobileCard) mobileCard.classList.remove('hidden');
+  } else {
+    if (desktopPill) desktopPill.classList.remove('hidden');
+    if (mobileCard) mobileCard.classList.add('hidden');
+  }
+}
+
+// Official Spotify iFrame API Controller Setup
 window.onSpotifyIframeApiReady = (IFrameAPI) => {
   const element = document.getElementById('spotify-iframe');
   if (!element) return;
@@ -105,7 +123,6 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
   const callback = (EmbedController) => {
     embedController = EmbedController;
 
-    // Listen to Spotify playback updates for position, duration, and play/pause state
     EmbedController.addListener('playback_update', (e) => {
       if (e && e.data) {
         const positionSec = Math.floor((e.data.position || 0) / 1000);
@@ -143,9 +160,12 @@ function init() {
   setInterval(updateClock, 1000);
   initRealtimeListenerCounter();
 
+  // Run device detection and set appropriate mobile / desktop view
+  setupDevicePlayer();
+  window.addEventListener('resize', setupDevicePlayer);
+
   loadTrack(0, false);
 
-  // Mobile Touch + Pointer Click Listeners for 100% Mobile Compatibility
   const addTouchAndClickListener = (el, handler) => {
     if (!el) return;
     let touchHandled = false;
@@ -195,7 +215,7 @@ function updateClock() {
   if (clockAmpmEl) clockAmpmEl.textContent = ampm;
 }
 
-// 100% Real-Time Active Listener Counter (Zero Fake Math)
+// 100% Real-Time Active Listener Counter
 function initRealtimeListenerCounter() {
   const SESSION_ID = 'session_' + Math.random().toString(36).substring(2, 9);
   const STORAGE_KEY = 'saloon_real_active_sessions';
@@ -253,7 +273,6 @@ function initRealtimeListenerCounter() {
   });
 }
 
-// Load Track — GUARANTEES every next/prev song starts cleanly from 0:00
 function loadTrack(index, autoPlay = true) {
   currentTrackIndex = index;
   const track = PLAYLIST[currentTrackIndex];
@@ -262,7 +281,6 @@ function loadTrack(index, autoPlay = true) {
   trackArtistEl.textContent = track.artist;
   trackArtEl.src = track.art;
 
-  // Immediately reset timeline to 0% and 0:00
   progressBarEl.style.width = '0%';
   timeDisplayEl.textContent = `0:00 / ${formatTime(track.duration)}`;
 
